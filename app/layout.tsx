@@ -1,15 +1,9 @@
-"use client";
-
-import { useEffect } from "react";
 import UserNav from "@/components/UserNav/UserNav";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Phudu } from "next/font/google";
 import ReduxProvider from "@/redux/provider";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebase-config";
-import { store } from "@/redux/store";
-import { setLoggedIn, setLoggedOut } from "@/redux/features/auth-slice";
+import AuthWatch from "@/components/AuthWatch/AuthWatch";
 
 const phudu = Phudu({ subsets: ["latin"] });
 
@@ -23,26 +17,11 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            //console.log("auth state changed");
-
-            if (user) {
-                //console.log("logged in user:", user);
-
-                store.dispatch(
-                    setLoggedIn(user.uid, user.email!, user.displayName!)
-                );
-            } else {
-                store.dispatch(setLoggedOut());
-            }
-        });
-    }, []);
-
     return (
         <html lang="en">
             <body className={phudu.className}>
                 <ReduxProvider>
+                    <AuthWatch />
                     <UserNav />
                     <div className="bg-sky-900 h-screen w-screen flex flex-col items-center justify-center">
                         {children}
